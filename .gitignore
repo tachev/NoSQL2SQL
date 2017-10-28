@@ -1,0 +1,11 @@
+.vs
+CosmosDB/bin
+CosmosDB/obj
+CosmosDBTests/bin
+CosmosDBTests/obj
+Interfaces/bin
+Interfaces/obj
+MSSQLTests/bin
+MSSQLTests/obj
+MSSQL/obj
+MSSQL/bin
