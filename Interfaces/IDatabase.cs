@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Geo.Data
 {
-	public interface IDatabase<T>
-    {
+	public interface IDatabase<T> where T: class, IDocument, new()
+	{
 		Task<string> CreateItemAsync(T item);
 
 		Task<T> ReadItemAsync(Expression<Func<T, bool>> predicate);

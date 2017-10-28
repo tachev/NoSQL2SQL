@@ -27,7 +27,7 @@ namespace Geo.Data.Tests
 
 		
 		[TestMethod]
-		public async System.Threading.Tasks.Task ReadTestAsync()
+		public async System.Threading.Tasks.Task ReadItemTestAsync()
 		{
 			IDatabase<Item> database = DatabaseFactory<Item>.CreateDatabase();
 
