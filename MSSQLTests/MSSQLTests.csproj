@@ -27,7 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj" />
-    <ProjectReference Include="..\MSSQL\MSSQLDatabase.csproj" />
+    <ProjectReference Include="..\MSSQL\MSSQL.csproj" />
   </ItemGroup>
 
 </Project>
