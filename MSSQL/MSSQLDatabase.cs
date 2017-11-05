@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -83,12 +84,15 @@ namespace Geo.Data
 
 		public async Task<string> UpsertItemAsync(T item)
 		{
-			if (item.Id == null) {
+			if (item.Id == null)
+			{
 				return await CreateItemAsync(item);
 			}
 
-			//TODO: Create real upsert with updating only the items that are new;
-			await ReplaceItemAsync(item);
+			var oldItem = await ReadItemAsync(a => a.Id == item.Id);
+			UpdateHelper.UpdateItem(oldItem, item);
+
+			await ReplaceItemAsync(oldItem);
 
 			return item.Id;
 		}
@@ -121,11 +125,10 @@ namespace Geo.Data
 			{
 				using (Connection)
 				{
-					T item = null;
+					T item = default(T);
 					Connection.Open();
 
-					object value;
-					string name = GetPropertyName(predicate, out value);
+					string name = GetPropertyName(predicate, out object value);
 
 					if (name != "Id" || !(value is string))
 					{

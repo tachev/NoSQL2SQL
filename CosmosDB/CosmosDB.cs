@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Geo.Data
 {
-	public class CosmosDB<T> :IDatabase<T> where T : class, IDocument
+	public class CosmosDB<T> :IDatabase<T> where T : class, IDocument, new()
 	{
 		private DocumentClient _client;
 		private string _endPoint;
@@ -136,9 +136,24 @@ namespace Geo.Data
 
         public async Task<string> UpsertItemAsync(T item)
 		{
-			Uri collUri = UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId);
-			var result = await Client.UpsertDocumentAsync(collUri, item);
-			return result.Resource.Id;
+			if (item.Id == null)
+			{
+				return await CreateItemAsync(item);
+			}
+			
+			Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, _collectionId, item.Id);
+			var oldItem = await Client.ReadDocumentAsync<T>(documentUri);
+
+			if (oldItem == null)
+			{
+				return await CreateItemAsync(item);
+			}
+
+			UpdateHelper.UpdateItem(oldItem, item);
+
+			await ReplaceItemAsync(oldItem);
+
+			return item.Id;
 		}
 
         public async Task ReplaceItemAsync(T item) 

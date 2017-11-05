@@ -70,6 +70,50 @@ namespace Geo.Data.Tests
 
 		}
 
+		[TestMethod]
+		public async System.Threading.Tasks.Task UpsertSubItemTestAsync()
+		{
+			IDatabase<Item> database = DatabaseFactory<Item>.CreateDatabase();
+
+			var item = CreateTestItem();
+
+			var id = await database.UpsertItemAsync(item);
+
+			Assert.IsNotNull(id);
+
+			//Insert a sub item and changing the name
+			var updateItem = new Item
+			{
+				Id = id,
+				Name = "New Name",
+				ListOfItems = new List<Item> {
+					new Item {Id = "1", Name = "Updated subitem", IntField = 1 },
+					new Item {Id = "10", Name = "New subitem", IntField = 10 }
+				}
+			};
+
+			var newId = await database.UpsertItemAsync(updateItem);
+
+			var readItem = await database.ReadItemAsync(a => a.Id == id);
+
+			//Check if the name has changed
+			Assert.AreEqual("New Name", readItem.Name);
+
+			//Check if the number of items grew
+			Assert.AreEqual(11, readItem.ListOfItems.Count);
+
+			//Check if the "0" item exists and didn't change
+			Assert.AreEqual("Subitem", readItem.ListOfItems.Find(a => a.Id == "0").Name);
+
+			//Check if the "1" item exists and changed his title, but didn't change the int value
+			Assert.AreEqual("Updated subitem", readItem.ListOfItems.Find(a => a.Id == "1").Name);
+			Assert.AreEqual(1, readItem.ListOfItems.Find(a => a.Id == "1").IntField);
+
+			//Check if the "10" item is saved correctly
+			Assert.AreEqual("New subitem", readItem.ListOfItems.Find(a => a.Id == "10").Name);
+			Assert.AreEqual(10, readItem.ListOfItems.Find(a => a.Id == "10").IntField);
+		}
+
 
 		[TestMethod]
 		public async System.Threading.Tasks.Task DeleteTestAsync()
@@ -96,7 +140,7 @@ namespace Geo.Data.Tests
 
 			for (int i = 0; i < 10; i++)
 			{
-				item.ListOfItems.Add(new Item { Name = "Sub item", IntField = i });
+				item.ListOfItems.Add(new Item { Id = i.ToString(), Name = "Subitem", IntField = i });
 			}
 
 			return item;
