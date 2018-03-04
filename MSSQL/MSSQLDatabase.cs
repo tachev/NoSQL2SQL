@@ -173,5 +173,14 @@ namespace Geo.Data
 			throw new NotSupportedException();
 		}
 
+		public Task<T> ReadItemByIdAsync(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<List<T>> SearchAsync(string searchQuery, string orderBy)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

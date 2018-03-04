@@ -167,5 +167,15 @@ namespace Geo.Data
 			Uri documentUri = UriFactory.CreateDocumentUri(_databaseId, _collectionId, itemId);
 			await Client.DeleteDocumentAsync(documentUri);
 		}
+
+		public Task<T> ReadItemByIdAsync(string id)
+		{
+			return ReadItemAsync(a => a.Id == id);
+		}
+
+		public Task<List<T>> SearchAsync(string searchQuery, string orderBy)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
